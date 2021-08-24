@@ -1,0 +1,81 @@
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import phonebookOperation from '../../redux/phonebook/phonebook-operation';
+import { getItems } from '../../redux/phonebook/phonebook-selectors';
+import styles from './ContactForm.module.css';
+
+const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const items = useSelector(getItems);
+  const dispatch = useDispatch();
+
+  const handleChange = e => {
+    const { name, value } = e.currentTarget;
+
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+
+      default:
+        return;
+    }
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    const coincidence = items.find(item => item.name === name);
+    if (coincidence) {
+      alert(`${name} is already in contacts`);
+      setName('');
+      setNumber('');
+      return;
+    }
+
+    dispatch(phonebookOperation.addContact(name, number));
+
+    setName('');
+    setNumber('');
+  };
+
+  return (
+    <form className={styles.contact__form} onSubmit={handleSubmit}>
+      <label className={styles.label__form}>
+        Name
+        <input
+          className={styles.contact__input}
+          type="text"
+          name="name"
+          value={name}
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+          required
+          onChange={handleChange}
+        />
+      </label>
+      <label className={styles.label__form}>
+        Number
+        <input
+          className={styles.contact__input}
+          type="tel"
+          name="number"
+          value={number}
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+          required
+          onChange={handleChange}
+        />
+      </label>
+      <button className={styles.button__submit} type="submit">
+        Add contact
+      </button>
+    </form>
+  );
+};
+
+export default ContactForm;
