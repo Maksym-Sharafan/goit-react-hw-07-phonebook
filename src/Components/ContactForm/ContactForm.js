@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import phonebookOperation from '../../redux/phonebook/phonebook-operation';
-import { getItems } from '../../redux/phonebook/phonebook-selectors';
+import { allOperations, allSelectors } from 'redux/phonebook';
 import styles from './ContactForm.module.css';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const items = useSelector(getItems);
+  const items = useSelector(allSelectors.getItems);
   const dispatch = useDispatch();
 
   const handleChange = e => {
@@ -37,7 +36,7 @@ const ContactForm = () => {
       return;
     }
 
-    dispatch(phonebookOperation.addContact(name, number));
+    dispatch(allOperations.addContact({ name, number }));
 
     setName('');
     setNumber('');

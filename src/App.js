@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import ContactForm from './Components/ContactForm';
 import Filter from './Components/Filter';
 import ContactList from './Components/ContactList';
-import phonebookOperation from './redux/phonebook/phonebook-operation';
+import { allOperations } from './redux/phonebook';
 
 import './App.css';
 
@@ -11,7 +11,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(phonebookOperation.fetchContact());
+    dispatch(allOperations.fetchContact());
   }, []);
 
   return (

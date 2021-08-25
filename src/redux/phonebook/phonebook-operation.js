@@ -1,50 +1,40 @@
 import axios from 'axios';
-import {
-  addContactError,
-  addContactSuccess,
-  addContactRequest,
-  deleteContactError,
-  deleteContactSuccess,
-  deleteContactRequest,
-  fetchContactError,
-  fetchContactSuccess,
-  fetchContactRequest,
-} from './phonebook-actions';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 axios.defaults.baseURL = 'http://localhost:4040';
 
-const fetchContact = () => async dispatch => {
-  dispatch(fetchContactRequest());
-  try {
-    const { data } = await axios.get('/contacts');
-    dispatch(fetchContactSuccess(data));
-  } catch (error) {
-    dispatch(fetchContactError(error));
-  }
-};
+export const fetchContact = createAsyncThunk(
+  'contacts/fetchContact',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get('/contacts');
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
 
-const addContact = (name, number) => async dispatch => {
-  const contact = { name, number };
-  dispatch(addContactRequest());
+export const addContact = createAsyncThunk(
+  'contacts/addContact',
+  async (contactData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post('/contacts', contactData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
 
-  try {
-    const { data } = await axios.post('/contacts', contact);
-    dispatch(addContactSuccess(data));
-  } catch (error) {
-    dispatch(addContactError(error));
-  }
-};
-
-const deleteContact = id => async dispatch => {
-  dispatch(deleteContactRequest());
-  try {
-    await axios.delete(`/contacts/${id}`);
-
-    dispatch(deleteContactSuccess(id));
-  } catch (error) {
-    dispatch(deleteContactError(error));
-  }
-};
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { addContact, deleteContact, fetchContact };
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/contacts/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);

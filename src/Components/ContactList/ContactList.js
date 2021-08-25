@@ -1,17 +1,13 @@
 import { useSelector, useDispatch } from 'react-redux';
 import Loader from 'react-loader-spinner';
-import phonebookOperation from '../../redux/phonebook/phonebook-operation';
-import {
-  getLoading,
-  getVisibleContacts,
-} from '../../redux/phonebook/phonebook-selectors';
+import { allOperations, allSelectors } from 'redux/phonebook';
 import styles from './ContactList.module.css';
 
 const ContactList = () => {
-  const filteredEl = useSelector(getVisibleContacts);
-  const loading = useSelector(getLoading);
+  const filteredEl = useSelector(allSelectors.getVisibleContacts);
+  const loading = useSelector(allSelectors.getLoading);
   const dispatch = useDispatch();
-  const onDeleteContact = id => dispatch(phonebookOperation.deleteContact(id));
+  const onDeleteContact = id => dispatch(allOperations.deleteContact(id));
 
   return (
     <ul className={styles.contactList}>
