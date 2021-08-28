@@ -1,17 +1,20 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
-import phonebookOperation from '../../redux/phonebook/phonebook-operation';
+import { useDeleteContactMutation } from 'redux/phonebook/phonebook-slice';
 import {
-  getLoading,
+  getFilter,
   getVisibleContacts,
-} from '../../redux/phonebook/phonebook-selectors';
+} from 'redux/phonebook/phonebook-selectors';
+
 import styles from './ContactList.module.css';
 
-const ContactList = () => {
-  const filteredEl = useSelector(getVisibleContacts);
-  const loading = useSelector(getLoading);
-  const dispatch = useDispatch();
-  const onDeleteContact = id => dispatch(phonebookOperation.deleteContact(id));
+const ContactList = ({ contacts, loading }) => {
+  const [deleteContact] = useDeleteContactMutation();
+  const keyWord = useSelector(getFilter);
+
+  const onDeleteContact = id => deleteContact(id);
+
+  const filteredEl = getVisibleContacts(contacts, keyWord);
 
   return (
     <ul className={styles.contactList}>
@@ -26,18 +29,19 @@ const ContactList = () => {
           />
         </div>
       )}
-      {filteredEl.map(contact => (
-        <li className={styles.contactList__item} key={contact.id}>
-          {contact.name} {contact.number}
-          <button
-            className={styles.contactList__button}
-            type="button"
-            onClick={() => onDeleteContact(contact.id)}
-          >
-            Удалить
-          </button>
-        </li>
-      ))}
+      {filteredEl &&
+        filteredEl.map(contact => (
+          <li className={styles.contactList__item} key={contact.id}>
+            {contact.name} {contact.phone}
+            <button
+              className={styles.contactList__button}
+              type="button"
+              onClick={() => onDeleteContact(contact.id)}
+            >
+              Удалить
+            </button>
+          </li>
+        ))}
     </ul>
   );
 };

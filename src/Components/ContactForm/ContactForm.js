@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import phonebookOperation from '../../redux/phonebook/phonebook-operation';
-import { getItems } from '../../redux/phonebook/phonebook-selectors';
+import { useCreateContactMutation } from 'redux/phonebook/phonebook-slice';
+
 import styles from './ContactForm.module.css';
 
-const ContactForm = () => {
+const ContactForm = ({ contacts }) => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-  const items = useSelector(getItems);
-  const dispatch = useDispatch();
+  const [phone, setPhone] = useState('');
+  const [createContact] = useCreateContactMutation();
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
@@ -17,8 +15,8 @@ const ContactForm = () => {
       case 'name':
         setName(value);
         break;
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         break;
 
       default:
@@ -29,18 +27,18 @@ const ContactForm = () => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    const coincidence = items.find(item => item.name === name);
+    const coincidence = contacts.find(item => item.name === name);
     if (coincidence) {
       alert(`${name} is already in contacts`);
       setName('');
-      setNumber('');
+      setPhone('');
       return;
     }
 
-    dispatch(phonebookOperation.addContact(name, number));
+    createContact({ name, phone });
 
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
@@ -63,8 +61,8 @@ const ContactForm = () => {
         <input
           className={styles.contact__input}
           type="tel"
-          name="number"
-          value={number}
+          name="phone"
+          value={phone}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
           required

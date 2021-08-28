@@ -1,27 +1,20 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useFetchContactsQuery } from './redux/phonebook/phonebook-slice';
 import ContactForm from './Components/ContactForm';
 import Filter from './Components/Filter';
 import ContactList from './Components/ContactList';
-import phonebookOperation from './redux/phonebook/phonebook-operation';
 
 import './App.css';
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(phonebookOperation.fetchContact());
-  }, []);
-
+  const { data, isFetching } = useFetchContactsQuery();
   return (
     <div className="App">
       <div>
         <h1>Phonebook</h1>
-        <ContactForm />
+        <ContactForm contacts={data} />
         <h2>Contacts</h2>
         <Filter />
-        <ContactList />
+        <ContactList contacts={data} loading={isFetching} />
       </div>
     </div>
   );
